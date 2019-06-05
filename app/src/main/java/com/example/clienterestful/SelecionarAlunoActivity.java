@@ -1,11 +1,13 @@
 package com.example.clienterestful;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -21,36 +23,39 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.LinkedList;
 
-public class ConsultarTodosAlunosActivity extends AppCompatActivity {
-    Button btnConsultar;
+public class SelecionarAlunoActivity extends AppCompatActivity {
     ListView listView;
     AlunoAdapter alunoAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_consultar_todos_alunos);
-
-
-        btnConsultar = this.findViewById(R.id.btnConsultarTA);
+        setContentView(R.layout.activity_selecionar_aluno);
         listView = this.findViewById(R.id.lstAlunos);
 
         if (alunoAdapter == null) {
             alunoAdapter = new AlunoAdapter(this.getBaseContext(), new LinkedList<Aluno>());
+            listView.setAdapter(alunoAdapter);
+
+            GetAlunosTask getAlunosTask = new GetAlunosTask();
+            getAlunosTask.execute();
+        }
+        else {
+            alunoAdapter = (AlunoAdapter) listView.getAdapter();
         }
 
-        listView.setAdapter(alunoAdapter);
-
-        btnConsultar.setOnClickListener(new View.OnClickListener() {
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onClick(View v) {
-                GetAlunosTask getAlunosTask = new GetAlunosTask();
-                getAlunosTask.execute();
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent data = new Intent();
+                data.putExtra("ALUNO", (Aluno)alunoAdapter.getItem(position));
+                setResult(Activity.RESULT_OK, data);
+                finish();
             }
         });
     }
 
-    public class GetAlunosTask extends AsyncTask<Void, Void, Aluno[]> {
+    public class GetAlunosTask extends AsyncTask<SelecionarAlunoActivity, Void, Aluno[]> {
         String URL_CONSULTAR_TODOS_ALUNOS;
         @Override
         protected void onPreExecute() {
@@ -60,11 +65,11 @@ public class ConsultarTodosAlunosActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Aluno[] alunos) {
             if (alunos != null) {
-                alunoAdapter.setAlunos(Arrays.asList(alunos));
+                SelecionarAlunoActivity.this.alunoAdapter.setAlunos(Arrays.asList(alunos));
                 alunoAdapter.notifyDataSetChanged();
             }
             else {
-                Toast.makeText(ConsultarTodosAlunosActivity.this, "Erro na busca de alunos", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SelecionarAlunoActivity.this, "Erro na busca de alunos", Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -74,39 +79,7 @@ public class ConsultarTodosAlunosActivity extends AppCompatActivity {
         }
 
         @Override
-        protected Aluno[] doInBackground(Void... params) {
-            /*String ip = "";
-            try(final DatagramSocket socket = new DatagramSocket()){
-                socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
-                ip = socket.getLocalAddress().getHostAddress();
-            } catch (UnknownHostException | SocketException e) {
-                e.printStackTrace();
-                Toast.makeText(ConsultarTodosAlunosActivity.this, "Erro ao recuperar ip do celular", Toast.LENGTH_LONG).show();
-                ConsultarTodosAlunosActivity.this.finish();
-            }*/
-
-            /*try {
-                Enumeration e = NetworkInterface.getNetworkInterfaces();
-                while(e.hasMoreElements())
-                {
-                    NetworkInterface n = (NetworkInterface) e.nextElement();
-                    Enumeration ee = n.getInetAddresses();
-                    while (ee.hasMoreElements())
-                    {
-                        ip = ((InetAddress) ee.nextElement()).getHostAddress();
-                        if (ip.startsWith("177")) {
-                            break;
-                        }
-                    }
-                    if (ip.startsWith("177"))
-                        break;
-                }
-            } catch (SocketException e) {
-                e.printStackTrace();
-                Toast.makeText(ConsultarTodosAlunosActivity.this, "Erro ao recuperar ip do celular", Toast.LENGTH_LONG).show();
-                ConsultarTodosAlunosActivity.this.finish();
-            }*/
-
+        protected Aluno[] doInBackground(SelecionarAlunoActivity... params) {
             URL_CONSULTAR_TODOS_ALUNOS = "http://" + MainActivity.IP + ":8080/Projeto_Restful_AD/webresources/aluno/getAllAlunos";
 
             HttpURLConnection connection = null;
