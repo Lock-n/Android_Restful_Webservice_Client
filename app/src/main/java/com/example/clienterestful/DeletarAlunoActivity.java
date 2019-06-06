@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.BufferedOutputStream;
@@ -30,6 +31,7 @@ public class DeletarAlunoActivity extends AppCompatActivity {
     Button btnDeletar, btnSelecionar;
     RadioGroup rgpSelecionarDeletar;
     EditText edtRA;
+    TextView txtRA;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +42,7 @@ public class DeletarAlunoActivity extends AppCompatActivity {
         btnSelecionar = findViewById(R.id.btnSelecionarAlunoD);
         rgpSelecionarDeletar = (RadioGroup) findViewById(R.id.rdgrpSelecionarDigitar);
         edtRA = (EditText) findViewById(R.id.edtRA);
+        txtRA = (TextView) findViewById(R.id.txtRA);
 
         btnDeletar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,6 +93,8 @@ public class DeletarAlunoActivity extends AppCompatActivity {
             if (data != null) {
                 aluno_a_ser_deletado = (Aluno)data.getSerializableExtra("ALUNO");//new Aluno(ra, nome, email);;
                 Log.d("Debug", "aluno_a_ser_deletado: " + aluno_a_ser_deletado.toString());
+
+                txtRA.setText(aluno_a_ser_deletado.getRA());
             }
         }
     }

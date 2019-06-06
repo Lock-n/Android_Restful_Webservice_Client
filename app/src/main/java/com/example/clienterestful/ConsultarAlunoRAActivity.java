@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +25,7 @@ public class ConsultarAlunoRAActivity extends AppCompatActivity {
     TextView txtNome, txtRA, txtEmail;
     Button btnConsultar;
     EditText edtRA;
+    ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +37,7 @@ public class ConsultarAlunoRAActivity extends AppCompatActivity {
         txtRA = (TextView) findViewById(R.id.txtRA);
         txtNome = (TextView) findViewById(R.id.txtNome);
         edtRA = (EditText) findViewById(R.id.edtRA);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
         btnConsultar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,6 +58,10 @@ public class ConsultarAlunoRAActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            progressBar.setVisibility(View.VISIBLE);
+            txtEmail.setVisibility(View.INVISIBLE);
+            txtNome.setVisibility(View.INVISIBLE);
+            txtRA.setVisibility(View.INVISIBLE);
         }
 
         @Override
@@ -64,10 +71,15 @@ public class ConsultarAlunoRAActivity extends AppCompatActivity {
                 txtNome.setText(aluno.getNome());
                 txtRA.setText(aluno.getRA());
                 Toast.makeText(ConsultarAlunoRAActivity.this, "Consulta feita com sucesso!", Toast.LENGTH_SHORT).show();
+
+                txtEmail.setVisibility(View.VISIBLE);
+                txtNome.setVisibility(View.VISIBLE);
+                txtRA.setVisibility(View.VISIBLE);
             }
             else {
                 Toast.makeText(ConsultarAlunoRAActivity.this, "Erro na consulta de aluno", Toast.LENGTH_SHORT).show();
             }
+            progressBar.setVisibility(View.INVISIBLE);
         }
 
         @Override

@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -26,12 +27,13 @@ import java.util.LinkedList;
 public class SelecionarAlunoActivity extends AppCompatActivity {
     ListView listView;
     AlunoAdapter alunoAdapter;
-
+    ProgressBar progressBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_selecionar_aluno);
         listView = this.findViewById(R.id.lstAlunos);
+        progressBar = (ProgressBar) findViewById(R.id.pbSelecionarAlunos);
 
         if (alunoAdapter == null) {
             alunoAdapter = new AlunoAdapter(this.getBaseContext(), new LinkedList<Aluno>());
@@ -60,6 +62,8 @@ public class SelecionarAlunoActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            progressBar.setVisibility(View.VISIBLE);
+            listView.setVisibility(View.INVISIBLE);
         }
 
         @Override
@@ -67,10 +71,12 @@ public class SelecionarAlunoActivity extends AppCompatActivity {
             if (alunos != null) {
                 SelecionarAlunoActivity.this.alunoAdapter.setAlunos(Arrays.asList(alunos));
                 alunoAdapter.notifyDataSetChanged();
+                listView.setVisibility(View.VISIBLE);
             }
             else {
                 Toast.makeText(SelecionarAlunoActivity.this, "Erro na busca de alunos", Toast.LENGTH_SHORT).show();
             }
+            progressBar.setVisibility(View.INVISIBLE);
         }
 
         @Override

@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -27,6 +28,7 @@ public class AlterarAlunoActivity extends AppCompatActivity {
     private Aluno aluno_to_be_updated;
     Button btnAlterar, btnSelecionar;
     EditText edtNome, edtEmail;
+    TextView txtRA;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +39,7 @@ public class AlterarAlunoActivity extends AppCompatActivity {
         btnSelecionar = (Button) findViewById(R.id.btnSelecionar);
         edtEmail = (EditText) findViewById(R.id.edtEmail);
         edtNome = (EditText) findViewById(R.id.edtNome);
+        txtRA = (TextView) findViewById(R.id.txtRA);
 
         btnSelecionar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,7 +73,11 @@ public class AlterarAlunoActivity extends AppCompatActivity {
         if (requestCode == REQUEST_CODE) {
             if (data != null) {
                 aluno_to_be_updated = (Aluno)data.getSerializableExtra("ALUNO");
+                edtNome.setText(aluno_to_be_updated.getNome());
+                edtEmail.setText(aluno_to_be_updated.getEmail());
                 Log.d("Debug", "aluno_to_be_updated: " + aluno_to_be_updated.toString());
+
+                txtRA.setText(aluno_to_be_updated.getRA());
             }
         }
     }
@@ -98,15 +105,15 @@ public class AlterarAlunoActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            String URL_DELETAR_TODOS_ALUNOS = "http://" + MainActivity.IP + ":8080/Projeto_Restful_AD/webresources/aluno/putAluno";
+            String URL_ALTERAR_TODOS_ALUNOS = "http://" + MainActivity.IP + ":8080/Projeto_Restful_AD/webresources/aluno/putAluno";
 
             HttpURLConnection connection = null;
             //BufferedReader reader = null;
 
             try {
-                URL url = new URL(URL_DELETAR_TODOS_ALUNOS);
+                URL url = new URL(URL_ALTERAR_TODOS_ALUNOS);
                 connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("POST");
+                connection.setRequestMethod("PUT");
                 connection.addRequestProperty("Content-Type", "application/json");
                 OutputStream out = null;
 
@@ -129,6 +136,7 @@ public class AlterarAlunoActivity extends AppCompatActivity {
                 return (responseCode == HttpURLConnection.HTTP_OK || responseCode == HttpURLConnection.HTTP_NO_CONTENT);
 
             } catch (MalformedURLException e) {
+                Log.e("ERROR", e.getMessage());
                 e.printStackTrace();
             } catch (IOException e) {
                 Log.e("ERROR", e.getMessage());
